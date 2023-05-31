@@ -12,16 +12,16 @@ import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-//@Configuration
+@Configuration
 @RequiredArgsConstructor
-public class DBJobConfiguration {
+public class JobExecutionConfiguration {
 
 	private final JobBuilderFactory jobBuilderFactory;
 	private final StepBuilderFactory stepBuilderFactory;
 
 	@Bean
 	public Job job() {
-		return jobBuilderFactory.get("job")
+		return jobBuilderFactory.get("Job")
 				.start(step1())
 				.next(step2())
 				.build();
@@ -34,7 +34,7 @@ public class DBJobConfiguration {
 					@Override
 					public RepeatStatus execute(StepContribution stepContribution, ChunkContext chunkContext) throws Exception {
 
-						System.out.println("step1 was executed");
+						System.out.println("step1 has executed");
 
 						return RepeatStatus.FINISHED;
 					}
@@ -48,9 +48,8 @@ public class DBJobConfiguration {
 				.tasklet(new Tasklet() {
 					@Override
 					public RepeatStatus execute(StepContribution stepContribution, ChunkContext chunkContext) throws Exception {
-
-						System.out.println("step2 was executed");
-
+						System.out.println("step2 has executed");
+//						throw new RuntimeException("step2 has failed");
 						return RepeatStatus.FINISHED;
 					}
 				})
