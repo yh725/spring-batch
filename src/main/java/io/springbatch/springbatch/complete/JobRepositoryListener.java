@@ -1,4 +1,4 @@
-package io.springbatch.springbatch;
+package io.springbatch.springbatch.complete;
 
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.repository.JobRepository;

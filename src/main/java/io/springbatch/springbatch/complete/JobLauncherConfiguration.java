@@ -1,4 +1,4 @@
-package io.springbatch.springbatch;
+package io.springbatch.springbatch.complete;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
@@ -10,20 +10,21 @@ import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
 //@Configuration
 @RequiredArgsConstructor
-public class StepContributionConfiguration {
+public class JobLauncherConfiguration {
 
 	private final JobBuilderFactory jobBuilderFactory;
 	private final StepBuilderFactory stepBuilderFactory;
+	private final JobRepositoryListener jobRepositoryListener;
 
 	@Bean
 	public Job batchJob() {
 		return jobBuilderFactory.get("Job")
 				.start(step1())
 				.next(step2())
+				.listener(jobRepositoryListener)
 				.build();
 	}
 
@@ -33,8 +34,7 @@ public class StepContributionConfiguration {
 				.tasklet(new Tasklet() {
 					@Override
 					public RepeatStatus execute(StepContribution stepContribution, ChunkContext chunkContext) throws Exception {
-						stepContribution.getStepExecution().getJobExecution().getJobInstance().getJobName();
-						System.out.println(">> step1 has executed");
+						Thread.sleep(3000);
 						return RepeatStatus.FINISHED;
 					}
 				})
@@ -44,10 +44,7 @@ public class StepContributionConfiguration {
 	@Bean
 	public Step step2() {
 		return stepBuilderFactory.get("step2")
-				.tasklet((stepContribution, chunkContext) -> {
-					System.out.println(">> step2 has executed");
-					return RepeatStatus.FINISHED;
-				})
+				.tasklet((stepContribution, chunkContext) -> null)
 				.build();
 	}
 }
