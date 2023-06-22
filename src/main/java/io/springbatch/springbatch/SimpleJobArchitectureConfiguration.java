@@ -1,19 +1,18 @@
 package io.springbatch.springbatch;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.batch.core.*;
+import org.springframework.batch.core.Job;
+import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
-import org.springframework.batch.core.scope.context.ChunkContext;
-import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @RequiredArgsConstructor
-public class StartNextConfiguration {
+public class SimpleJobArchitectureConfiguration {
 
 	private final JobBuilderFactory jobBuilderFactory;
 	private final StepBuilderFactory stepBuilderFactory;
@@ -23,8 +22,6 @@ public class StartNextConfiguration {
 		return jobBuilderFactory.get("batchJob")
 				.start(step1())
 				.next(step2())
-				.next(step3())
-				.incrementer(new RunIdIncrementer())
 				.build();
 	}
 
@@ -42,19 +39,8 @@ public class StartNextConfiguration {
 	public Step step2() {
 		return stepBuilderFactory.get("step2")
 				.tasklet((stepContribution, chunkContext) -> {
+//					throw new RuntimeException("step2 was failed");
 					System.out.println("step2 has executed");
-					return RepeatStatus.FINISHED;
-				})
-				.build();
-	}
-
-	@Bean
-	public Step step3() {
-		return stepBuilderFactory.get("step3")
-				.tasklet((stepContribution, chunkContext) -> {
-					chunkContext.getStepContext().getStepExecution().setStatus(BatchStatus.FAILED);
-					stepContribution.setExitStatus(ExitStatus.STOPPED);
-					System.out.println("step3 has executed");
 					return RepeatStatus.FINISHED;
 				})
 				.build();
