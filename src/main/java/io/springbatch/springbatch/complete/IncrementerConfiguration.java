@@ -1,18 +1,18 @@
-package io.springbatch.springbatch;
+package io.springbatch.springbatch.complete;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
-import org.springframework.batch.core.job.DefaultJobParametersValidator;
+import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 //@Configuration
 @RequiredArgsConstructor
-public class ValidatorConfiguration {
+public class IncrementerConfiguration {
 
 	private final JobBuilderFactory jobBuilderFactory;
 	private final StepBuilderFactory stepBuilderFactory;
@@ -22,9 +22,8 @@ public class ValidatorConfiguration {
 		return jobBuilderFactory.get("batchJob")
 				.start(step1())
 				.next(step2())
-				.next(step3())
-//				.validator(new CustomJobParameterValidator())
-				.validator(new DefaultJobParametersValidator(new String[]{"name", "date"}, new String[]{"count"}))
+//				.incrementer(new CustomJobParametersIncrementer())
+				.incrementer(new RunIdIncrementer())
 				.build();
 	}
 
@@ -42,17 +41,8 @@ public class ValidatorConfiguration {
 	public Step step2() {
 		return stepBuilderFactory.get("step2")
 				.tasklet((stepContribution, chunkContext) -> {
+//					throw new RuntimeException("step2 was failed");
 					System.out.println("step2 has executed");
-					return RepeatStatus.FINISHED;
-				})
-				.build();
-	}
-
-	@Bean
-	public Step step3() {
-		return stepBuilderFactory.get("step3")
-				.tasklet((stepContribution, chunkContext) -> {
-					System.out.println("step3 has executed");
 					return RepeatStatus.FINISHED;
 				})
 				.build();
