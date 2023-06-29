@@ -1,5 +1,6 @@
 package io.springbatch.springbatch;
 
+import io.springbatch.springbatch.complete.CustomTasklet1;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -14,7 +15,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @RequiredArgsConstructor
-public class TaskletStepArchitectureConfiguration {
+public class FlowJobConfiguration {
 
 	private final JobBuilderFactory jobBuilderFactory;
 	private final StepBuilderFactory stepBuilderFactory;
@@ -23,7 +24,10 @@ public class TaskletStepArchitectureConfiguration {
 	public Job batchJob() {
 		return jobBuilderFactory.get("batchJob")
 				.start(step1())
-				.next(step2())
+				.on("COMPLETED").to(step3())
+				.from(step1())
+				.on("FAILED").to(step2())
+				.end()
 				.build();
 	}
 
@@ -33,7 +37,8 @@ public class TaskletStepArchitectureConfiguration {
 				.tasklet(new Tasklet() {
 					@Override
 					public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
-						return RepeatStatus.FINISHED;
+						throw new RuntimeException("step1 was failed");
+//						return RepeatStatus.FINISHED;
 					}
 				})
 				.build();
@@ -42,12 +47,14 @@ public class TaskletStepArchitectureConfiguration {
 	@Bean
 	public Step step2() {
 		return stepBuilderFactory.get("step2")
-				.tasklet(new Tasklet() {
-					@Override
-					public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
-						return RepeatStatus.FINISHED;
-					}
-				})
+				.tasklet(new CustomTasklet1())
+				.build();
+	}
+
+	@Bean
+	public Step step3() {
+		return stepBuilderFactory.get("step3")
+				.tasklet(new CustomTasklet1())
 				.build();
 	}
 }

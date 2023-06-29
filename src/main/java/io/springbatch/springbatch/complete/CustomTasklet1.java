@@ -1,11 +1,11 @@
-package io.springbatch.springbatch;
+package io.springbatch.springbatch.complete;
 
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 
-public class CustomTasklet implements Tasklet {
+public class CustomTasklet1 implements Tasklet {
 
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
