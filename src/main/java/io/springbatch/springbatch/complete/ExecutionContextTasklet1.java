@@ -13,7 +13,7 @@ import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
-@Component
+//@Component
 public class ExecutionContextTasklet1 implements Tasklet {
 
 	@Override

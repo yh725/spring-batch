@@ -7,7 +7,7 @@ import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.stereotype.Component;
 
-@Component
+//@Component
 public class ExecutionContextTasklet2 implements Tasklet {
 
 	@Override
